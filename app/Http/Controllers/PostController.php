@@ -15,7 +15,7 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::all();
-        dd($posts);
+        return response()->json($posts);
     }
     /**
      * Show the form for creating a new resource.
@@ -36,13 +36,13 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|unique:post|min:5|max:100',
-            'description' => 'required|min:10|max:50',
+            'title' => 'required|unique:post|min:5|max:50',
+            'description' => 'required|min:10|max:100',
         ]);
 
         $post = Post::create([
             'title' => $request->title,
-            'content' => $request->content,
+            'description' => $request->description,
         ]);
 
         return response()->json($post, 201);
@@ -94,7 +94,7 @@ class PostController extends Controller
         ]);
 
         $post->title = $request->title;
-        $post->content = $request->content;
+        $post->description = $request->description;
         $post->save();
 
         return response()->json($post);
