@@ -15,7 +15,7 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::all();
-        return response()->json($posts);
+        dd($posts);
     }
     /**
      * Show the form for creating a new resource.
