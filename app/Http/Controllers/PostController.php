@@ -4,29 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
-/**
- * @OA\Post(
- *     path="/api/posts",
- *     summary="Create a new post",
- *     description="Create a new post with the provided title and description",
- *     tags={"Post"},
- *     @OA\RequestBody(
- *         required=true,
- *         @OA\JsonContent(
- *             required={"title", "description"},
- *             @OA\Property(property="title", type="string", example="New Post Title"),
- *             @OA\Property(property="description", type="string", example="This is a new post description")
- *         )
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="OK",
- *         @OA\MediaType(
- *             mediaType="application/json"
- *         )
- *     )
- * )
- */
+use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
@@ -39,7 +17,7 @@ class PostController extends Controller
      * @OA\Get(
      *     path="/api/posts",
      *     summary="Get all posts",
-     *     tags={"Post"},
+     *     tags={"Posts"},
      *     @OA\Response(response=200, description="All Post"),
      *      @OA\Response(response=400, description="Bad request"),
      *      @OA\Response(response=404, description="Resource Not Found"),
@@ -48,19 +26,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::all();
-        return response()->json($posts);
+        return Post::all();
     }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-    
+
     /**
      * Store a newly created resource in storage.
      *
@@ -68,10 +36,44 @@ class PostController extends Controller
      * @return \Illuminate\Http\Response
      */
     /**
+     * @OA\Post(
+     *     path="/api/posts",
+     *     summary="Create a new post",
+     *     description="Create a new post with the provided title and description",
+     *     tags={"Posts"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"title", "description"},
+     *             @OA\Property(property="title", type="string", example="New Post Title"),
+     *             @OA\Property(property="description", type="string", example="This is a new post description")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\MediaType(
+     *             mediaType="application/json"
+     *         )
+     *     )
+     * )
+     */
+    public function store(Request $request)
+    {
+        return Post::create($request->all());
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    /**
      * @OA\Get(
      *     path="/api/posts/{id}",
      *     summary="Get one posts",
-     *     tags={"Post"},
+     *     tags={"Posts"},
      *          @OA\Parameter(
      *              name="id",
      *               in="path",
@@ -85,50 +87,9 @@ class PostController extends Controller
      *     security={{"bearerAuth":{}}}
      * )
      */
-    public function store(Request $request)
+    public function show(Post $post)
     {
-        //
-        return Post::create($request->all());
-    }
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //         'title' => 'required|unique:post|min:5|max:50',
-    //         'description' => 'required|min:10|max:100',
-    //     ]);
-
-    //     $post = Post::create([
-    //         'title' => $request->title,
-    //         'description' => $request->description,
-    //     ]);
-
-    //     return response()->json($post, 201);
-    // }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $post = Post::find($id);
-        if (!$post) {
-            return response()->json(['error' => 'Post pages not found'], 404);
-        }
-        return response()->json($post);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return $post;
     }
 
     /**
@@ -139,13 +100,10 @@ class PostController extends Controller
      * @return \Illuminate\Http\Response
      */
     /**
-     * Update the specified resource in storage.
-     */
-    /**
      * @OA\Put(
      *     path="/api/posts/{id}",
      *     summary="Update post",
-     *     tags={"Post"},
+     *     tags={"Posts"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -170,13 +128,12 @@ class PostController extends Controller
      *     security={{"bearerAuth":{}}}
      * )
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Post $post)
     {
-         //
-         $post = Post::findOrFail($id);
-         $post->update($request->all());
-         return $post;
+        $post->update($request->all());
+        return $post;
     }
+
     /**
      * Remove the specified resource from storage.
      *
@@ -184,40 +141,25 @@ class PostController extends Controller
      * @return \Illuminate\Http\Response
      */
     /**
-     * Remove the specified resource from storage.
-     */
-    /**
      * @OA\Delete(
      *     path="/api/posts/{id}",
      *     summary="Delete a specific post",
-     *     tags={"Post"},
+     *     tags={"Posts"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         description="Post ID",
      *         required=true,
      *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 type="object",
-     *                 @OA\Property(property="name", type="string", example="New Post Title"),
-     *                 @OA\Property(property="description", type="string", example="This is a new post description")
-     *             )
-     *         )
-     *     ),     
+     *     ),    
      *     @OA\Response(response=200, description="Delete Post"),
      *     @OA\Response(response=400, description="Bad request"),
      *     @OA\Response(response=404, description="Resource Not Found"),
      *     security={{"bearerAuth":{}}}
      * )
      */
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        $post = Post::findOrFail($id);
         $post->delete();
         return "Delete success";
     }
