@@ -115,7 +115,7 @@ class PostController extends Controller
     {
         $post = Post::find($id);
         if (!$post) {
-            return response()->json(['error' => 'Post pages not found'], 404);
+            return response()->json(['error' => 'Post not found'], 404);
         }
         return response()->json($post);
     }
