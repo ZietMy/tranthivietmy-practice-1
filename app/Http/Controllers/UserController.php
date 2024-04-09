@@ -117,14 +117,14 @@ class UserController extends Controller
     *         @OA\MediaType(
     *             mediaType="application/json",
     *             @OA\Schema(
-    *                 type="object",
-    *                  @OA\Property(property="name", type="string", example="john_doe"),
-    *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
-    *             @OA\Property(property="password", type="string", example="password123")
+*                   type="object",
+*                   @OA\Property(property="name", type="string", example="john_doe"),
+*                   @OA\Property(property="email", type="string", format="email", example="john@example.com"),
+*                   @OA\Property(property="password", type="string", example="password123")
     *             )
     *         )
     *     ), 
-     *     @OA\Response(response=200, description="Delate user" ),
+     *     @OA\Response(response=201, description="Update user" ),
      *      @OA\Response(response=400, description="Bad request"),
      *      @OA\Response(response=404, description="Resource Not Found"),
      *     security={{"bearerAuth":{}}}

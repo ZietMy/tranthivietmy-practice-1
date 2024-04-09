@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
  *     path="/api/posts",
  *     summary="Create a new post",
  *     description="Create a new post with the provided title and description",
- *     tags={"Post"},
+ *     tags={"Posts"},
  *     @OA\RequestBody(
  *         required=true,
  *         @OA\JsonContent(
@@ -39,7 +39,7 @@ class PostController extends Controller
      * @OA\Get(
      *     path="/api/posts",
      *     summary="Get all posts",
-     *     tags={"Post"},
+     *     tags={"Posts"},
      *     @OA\Response(response=200, description="All Post"),
      *      @OA\Response(response=400, description="Bad request"),
      *      @OA\Response(response=404, description="Resource Not Found"),
@@ -71,7 +71,7 @@ class PostController extends Controller
      * @OA\Get(
      *     path="/api/posts/{id}",
      *     summary="Get one posts",
-     *     tags={"Post"},
+     *     tags={"Posts"},
      *          @OA\Parameter(
      *              name="id",
      *               in="path",
@@ -93,20 +93,6 @@ class PostController extends Controller
                 ]);
         return Post::create($request->all());
     }
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //         'title' => 'required|unique:post|min:5|max:50',
-    //         'description' => 'required|min:10|max:100',
-    //     ]);
-
-    //     $post = Post::create([
-    //         'title' => $request->title,
-    //         'description' => $request->description,
-    //     ]);
-
-    //     return response()->json($post, 201);
-    // }
 
     /**
      * Display the specified resource.
