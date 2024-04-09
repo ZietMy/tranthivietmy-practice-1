@@ -101,9 +101,9 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
       /**
-     * @OA\Put(
+     * @OA\Update(
      *     path="/api/users/{id}",
-     *     summary="Delete a specific user",
+     *     summary="Update a specific user",
      *     tags={"Users"},
      *     @OA\Parameter(
      *         name="id",
@@ -112,6 +112,18 @@ class UserController extends Controller
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
+        * @OA\RequestBody(
+    *         required=true,
+    *         @OA\MediaType(
+    *             mediaType="application/json",
+    *             @OA\Schema(
+    *                 type="object",
+    *                  @OA\Property(property="name", type="string", example="john_doe"),
+    *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
+    *             @OA\Property(property="password", type="string", example="password123")
+    *             )
+    *         )
+    *     ), 
      *     @OA\Response(response=200, description="Delate user" ),
      *      @OA\Response(response=400, description="Bad request"),
      *      @OA\Response(response=404, description="Resource Not Found"),
@@ -135,7 +147,7 @@ class UserController extends Controller
      /**
      * @OA\Delete(
      *     path="/api/users/{id}",
-     *     summary="Update a specific user",
+     *     summary="Delete a specific user",
      *     tags={"Users"},
      *     @OA\Parameter(
      *         name="id",
@@ -144,19 +156,8 @@ class UserController extends Controller
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
-     *     @OA\RequestBody(
- *         required=true,
- *         @OA\MediaType(
- *             mediaType="application/json",
- *             @OA\Schema(
- *                 type="object",
- *                  @OA\Property(property="name", type="string", example="john_doe"),
- *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
- *             @OA\Property(property="password", type="string", example="password123")
- *             )
- *         )
- *     ), 
-     *     @OA\Response(response=200, description="Update User"),
+     *     
+     *     @OA\Response(response=200, description="Delete User"),
      *     @OA\Response(response=400, description="Bad request"),
      *     @OA\Response(response=404, description="Resource Not Found"),
      *     security={{"bearerAuth":{}}}

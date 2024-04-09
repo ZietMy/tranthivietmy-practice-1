@@ -87,7 +87,10 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+                    'title' => 'required|unique:post|min:5|max:50',
+                    'description' => 'required|min:10|max:100',       
+                ]);
         return Post::create($request->all());
     }
     // public function store(Request $request)
