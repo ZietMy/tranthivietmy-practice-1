@@ -26,7 +26,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
-        return response()->json($users);
+        return $users;
     }
     
     /**
@@ -45,8 +45,8 @@ class UserController extends Controller
         *         required=true,
         *         @OA\JsonContent(
         *             required={"name", "email", "password"},
-        *             @OA\Property(property="name", type="string", example="john_doe"),
-        *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
+        *             @OA\Property(property="name", type="string", example="john_ha"),
+        *             @OA\Property(property="email", type="string", format="email", example="johnha@gmail.com"),
         *             @OA\Property(property="password", type="string", example="password123")
         *         )
         *     ),
@@ -67,30 +67,26 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     /**
- * @OA\Get(
- *     path="/api/users/{id}",
- *     summary="Get a specific user",
- *     tags={"Users"},
- *     @OA\Parameter(
- *         name="id",
- *         in="path",
- *         required=true,
- *         description="ID of the user to retrieve",
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(response=200, description="User Detail" ),
- *      @OA\Response(response=400, description="Bad request"),
- *      @OA\Response(response=404, description="Resource Not Found"),
- *     security={{"bearerAuth":{}}}
- * )
- */
-    public function show($id)
+     * @OA\Get(
+     *     path="/api/users/{id}",
+     *     summary="Get a specific user",
+     *     tags={"Users"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the user to retrieve",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="User Detail" ),
+     *      @OA\Response(response=400, description="Bad request"),
+     *      @OA\Response(response=404, description="Resource Not Found"),
+     *     security={{"bearerAuth":{}}}
+     * )
+     */
+    public function show(User $user)
     {
-        $user = User::find($id);
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
-        return response()->json($user);
+        return $user;
     }
 
     /**
@@ -100,8 +96,50 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-      /**
+     /**
      * @OA\Put(
+     *     path="/api/users/{id}",
+     *     summary="Update a specific user",
+     *     tags={"Users"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="User ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     *                  @OA\Property(property="name", type="string", example="john_doe"),
+     *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
+     *             @OA\Property(property="password", type="string", example="password123")
+     *             )
+     *         )
+     *     ),
+     *      @OA\Response(response=200, description="Update user" ),
+    *      @OA\Response(response=400, description="Bad request"),
+    *      @OA\Response(response=404, description="Resource Not Found"),
+    *     security={{"bearerAuth":{}}}
+    * )
+    */
+    public function update(Request $request, User $user)
+    {
+        $user->update($request->all());
+        return $user;
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+     /**
+     * @OA\Delete(
      *     path="/api/users/{id}",
      *     summary="Delete a specific user",
      *     tags={"Users"},
@@ -118,58 +156,9 @@ class UserController extends Controller
      *     security={{"bearerAuth":{}}}
      * )
      */
-    public function update(Request $request, $id)
+    public function destroy(User $user)
     {
-        
-    $user = User::findOrFail($id);
-    $user->update($request->all());
-    return $user;
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-     /**
-     * @OA\Delete(
-     *     path="/api/users/{id}",
-     *     summary="Update a specific user",
-     *     tags={"Users"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="User ID",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
- *         required=true,
- *         @OA\MediaType(
- *             mediaType="application/json",
- *             @OA\Schema(
- *                 type="object",
- *                  @OA\Property(property="name", type="string", example="john_doe"),
- *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
- *             @OA\Property(property="password", type="string", example="password123")
- *             )
- *         )
- *     ), 
-     *     @OA\Response(response=200, description="Update User"),
-     *     @OA\Response(response=400, description="Bad request"),
-     *     @OA\Response(response=404, description="Resource Not Found"),
-     *     security={{"bearerAuth":{}}}
-     * )
-     */
-    public function destroy($id)
-    {
-         $user = User::find($id);
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
-        
         $user->delete();
-        return response()->json(['message' => 'User deleted successfully']);
+        return "Delete user success";
     }
 }
