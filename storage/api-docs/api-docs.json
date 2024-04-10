@@ -5,6 +5,42 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/api/phones/{id}": {
+            "get": {
+                "tags": [
+                    "phones"
+                ],
+                "summary": "Get a specific phone",
+                "operationId": "f55bb0f06d51973256452654a222c095",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the phone to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Phoner Detail"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/posts": {
             "get": {
                 "tags": [
@@ -248,6 +284,10 @@
                                     "password": {
                                         "type": "string",
                                         "example": "password123"
+                                    },
+                                    "number": {
+                                        "type": "string",
+                                        "example": "0900777888"
                                     }
                                 },
                                 "type": "object"
@@ -338,6 +378,10 @@
                                     "password": {
                                         "type": "string",
                                         "example": "password123"
+                                    },
+                                    "number": {
+                                        "type": "string",
+                                        "example": "0900777888"
                                     }
                                 },
                                 "type": "object"

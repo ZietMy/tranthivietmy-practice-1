@@ -50,7 +50,8 @@ class UserController extends Controller
         *             required={"name", "email", "password"},
         *             @OA\Property(property="name", type="string", example="john_ha"),
         *             @OA\Property(property="email", type="string", format="email", example="johnha@gmail.com"),
-        *             @OA\Property(property="password", type="string", example="password123")
+        *             @OA\Property(property="password", type="string", example="password123"),
+        *             @OA\Property(property="number", type="string", example="0900777888"),
         *         )
         *     ),
         *    @OA\Response(response=200, description="Create New User" ),
@@ -168,7 +169,8 @@ class UserController extends Controller
      *                 type="object",
      *                  @OA\Property(property="name", type="string", example="john_doe"),
      *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
-     *             @OA\Property(property="password", type="string", example="password123")
+     *             @OA\Property(property="password", type="string", example="password123"),
+      *             @OA\Property(property="number", type="string", example="0900777888"),
      *             )
      *         )
      *     ),
