@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -59,8 +60,14 @@ class PostController extends Controller
      *     )
      * )
      */
-    public function store(Request $request)
+    public function store(Request $request,$userId)
     {
+        $user=User::find($userId);
+        if(!$user){
+            return response()->json([
+                'message'=>'Người dùng không tồn tại',
+            ],404);
+        }
         $validator = Validator::make($request->all(), [
             'title' => 'required|unique:posts|max:100|min:5',
             'description' => 'required|max:50|min:10',
@@ -77,6 +84,13 @@ class PostController extends Controller
             $errors = $validator->errors()->all();
             return response()->json($errors, 412);
         }
+        $post = new Post();
+        $post->title = $request->title;
+        $post->content = $request->content;
+        $post->user_id = $userId;
+        $post->save();
+
+        return response()->json(['message' => 'Post created successfully', 'post' => $post]);
         return Post::create($request->all());
     }
 
@@ -104,9 +118,19 @@ class PostController extends Controller
      *     security={{"bearerAuth":{}}}
      * )
      */
-    public function show(Post $post)
+    public function show($postId)
     {
+        $post=Post::find($postId);
+        if(!$post){
+            return response()->json([
+                'message'=>'Post không tồn tại',
+            ],404);
+        }
         return $post;
+        // $post = Post::findOrFail($postId);
+        // $creator = $post->user;
+        // // $posts = Post::where('user_id', $userId)->get();
+        // return response()->json(['posts' => $creator]);
     }
 
     /**
@@ -145,7 +169,7 @@ class PostController extends Controller
      *     security={{"bearerAuth":{}}}
      * )
      */
-    public function update(Request $request, Post $post)
+    public function update(Request $request, $postId)
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required|unique:posts|max:100|min:5',
@@ -163,8 +187,11 @@ class PostController extends Controller
             $errors = $validator->errors()->all();
             return response()->json($errors, 412);
         }
-        $post->update($request->all());
-        return $post;
+        $post = Post::findOrFail($postId);
+        $post->title = $request->title;
+        $post->content = $request->content;
+        $post->save();
+        return response()->json(['message' => 'Post updated successfully', 'post' => $post]);
     }
 
     /**

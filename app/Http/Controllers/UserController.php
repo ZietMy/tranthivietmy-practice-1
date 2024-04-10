@@ -133,7 +133,7 @@ class UserController extends Controller
      */
     public function show($userId)
     {
-        $user=User::with('phone')->find($userId);
+        $user=User::with('posts')->find($userId);
         if(!$user){
             return response()->json([
                 'message'=>'Người dùng không tồn tại',
@@ -264,6 +264,6 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
-        return "Delete user success";
+        return response()->json(['message' => 'Post deleted successfully']);
     }
 }
