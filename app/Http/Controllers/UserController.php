@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Phone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
+    
     /**
      * Display a listing of the resource.
      *
@@ -26,7 +28,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::all();
+        $users = User::with('phone')->get();
         return $users;
     }
     
@@ -61,7 +63,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|min:3|max:15',
             'email' => 'required|string|email|unique:users,email',
-            'password' => 'required|string|confirmed',
+            'password' => 'required|string',
         ], [
             'name.required' => 'Họ và tên bắt buộc phải nhập',
             'name.string' => 'Họ và tên bắt buộc là string',
@@ -73,13 +75,35 @@ class UserController extends Controller
             'email.string' => 'Email bắt buộc là string',
             'password.required' => 'Password bắt buộc phải nhập',
             'password.string' => 'Password bắt buộc là string',
-            'password.confirmed' => 'Password xác nhận không đúng',
+            // 'password.confirmed' => 'Password xác nhận không đúng',
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
             return response()->json($errors, 412);
-        } 
-        return User::create($request->all());
+        } else{
+            // Tạo mới người dùng
+            $user = new User();
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->password = $request->password;
+            $user->save();
+            if($request->has('number')){
+                $phone = new Phone();
+                $phone->number = $request->number;
+                // Gán user_id cho số điện thoại mới tạo
+                $phone->user_id = $user->id;
+                $phone->save();
+            }
+            $userData = $user->toArray();
+            $userData['phone'] = isset($phone) ? $phone->toArray() : null;
+            // Tạo mới số điện thoại và gán nó cho người dùng vừa tạo
+
+            return response()->json([
+                'message' => 'Người dùng đã được tạo thành công',
+                'data'=>$userData
+            ],201);
+        }
+        
     }
 
     /**
@@ -106,8 +130,14 @@ class UserController extends Controller
      *     security={{"bearerAuth":{}}}
      * )
      */
-    public function show(User $user)
+    public function show($userId)
     {
+        $user=User::with('phone')->find($userId);
+        if(!$user){
+            return response()->json([
+                'message'=>'Người dùng không tồn tại',
+            ],404);
+        }
         return $user;
     }
 
