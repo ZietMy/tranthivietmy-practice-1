@@ -178,31 +178,61 @@ class UserController extends Controller
     *     security={{"bearerAuth":{}}}
     * )
     */
-    public function update(Request $request, User $user)
+    public function update(Request $request, $userId)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|min:3|max:15',
-            'email' => 'required|string|email|unique:users,email',
-            'password' => 'required|string|confirmed',
+            'name' => 'string|min:3|max:15',
+            'email' => 'string|email|unique:users,email',
         ], [
-            'name.required' => 'Họ và tên bắt buộc phải nhập',
+            // 'name.required' => 'Họ và tên bắt buộc phải nhập',
             'name.string' => 'Họ và tên bắt buộc là string',
             'name.min' => 'Họ và tên phải từ :min ký tự trở lên',
             'name.max' => 'Họ và tên phải nhỏ hơn :max ký tự',
-            'email.required' => 'Email bắt buộc phải nhập',
+            // 'email.required' => 'Email bắt buộc phải nhập',
             'email.email' => 'Email không đúng định dạng',
             'email.unique' => 'Email đã tồn tại trên hệ thống',
             'email.string' => 'Email bắt buộc là string',
-            'password.required' => 'Password bắt buộc phải nhập',
-            'password.string' => 'Password bắt buộc là string',
-            'password.confirmed' => 'Password xác nhận không đúng',
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
             return response()->json($errors, 412);
-        } 
-        $user->update($request->all());
-        return $user;
+        } else{
+            // Tìm người dùng dựa trên id
+            $user = User::with('phone')->find($userId);
+
+            if (!$user) {
+                return response()->json(['message' => 'Không tìm thấy người dùng'], 404);
+            }
+            if ($request->has('name')) {
+                $user->name = $request->name;
+            }
+            if ($request->has('email')) {
+                $user->email = $request->email;
+            }
+            if ($request->has('password')) {
+                $user->password = bcrypt($request->password);
+            }
+            if ($request->has('number')) {
+                $phone = $user->phone;
+
+                // Nếu người dùng không có số điện thoại, tạo mới một số điện thoại mới
+                if (!$phone) {
+                    $phone = new Phone();
+                    $phone->user_id = $user->id;
+                }
+                // Cập nhật thông tin số điện thoại
+                $phone->number = $request->number;
+                $phone->save();
+            }
+
+            $user->save();
+            $userData = $user->toArray();
+            $userData['phone'] = isset($phone) ? $phone->toArray() : null;
+            return response()->json([
+                'message' => 'Thông tin của người dùng đã được cập nhật thành công',
+                'data'=>$userData
+            ]);
+        }
     }
 
     /**

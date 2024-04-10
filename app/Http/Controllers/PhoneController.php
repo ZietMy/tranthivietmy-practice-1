@@ -37,7 +37,10 @@ class PhoneController extends Controller
     public function show($phoneId)
     {
         $phone=Phone::with('user')->find($phoneId);
-        
+        return response()->json([
+            'message'=> 'show thành công',
+            'data'=>$phone
+        ]);
     }
 
     /**
